@@ -17,6 +17,7 @@ function getClientbalance($clientid, $dbh)
 
 	$total_amnt_paid = 0;
 	$total_repay_amt = 0;
+	$total_bal_due = 0;
 
 	foreach($results as $row)
 	{
@@ -24,23 +25,24 @@ function getClientbalance($clientid, $dbh)
 
 		$repay_amt = $row->repayment_amount;
 
-		$sql_inv_items="SELECT sum(amount_paid) as amount_paid from  invoice_items WHERE invoice_id=:inv_id group by invoice_id";
+		$sql_inv_items="SELECT sum(amount_paid) as amount_pai from  invoice_items WHERE invoice_id=:inv_id group by invoice_id";
 		$query_inv_items = $dbh -> prepare($sql_inv_items);
 		$query_inv_items->bindParam(':inv_id',$inv_id,PDO::PARAM_STR);
 		$query_inv_items->execute();
 		$results_items=$query_inv_items->fetchAll(PDO::FETCH_OBJ);
+		$amnt_paid = 0;
+		foreach ($results_items as $rs) 
+		{
+			$amnt_pa = $rs->amount_pai;
+			$amnt_paid = $amnt_paid+$amnt_pa;
+		}
 									
-		//foreach ($results_items as $rowinvitems) 
-		//{
-			$amnt_paid = $results_items->amount_paid;
+		//$amnt_paid = $results_items->amount_pai;
 
-			$total_amnt_paid = $amnt_paid+$total_amnt_paid;
-
-		//}
+		$total_amnt_paid = $amnt_paid+$total_amnt_paid;
 
 		$total_repay_amt =$repay_amt + $total_repay_amt; 
 
-		
 	}
 	$total_bal_due = $total_repay_amt - $total_amnt_paid;	
 	return $total_bal_due;
@@ -266,7 +268,7 @@ for ($k=0; $k < round($rate); $k++)
 						{
 
 							?>
-    			    		<option value="<?php  echo $row_clients->ID;?>"><?php  echo $row_clients->ContactName;?></option>
+    			    		<option value="<?php  echo $row_clients->ID;?>"><?php  echo $row_clients->ContactName;?> (<?php  echo $client_bal;?>)</option>
     			    
     			    		<?php 
     			    	}

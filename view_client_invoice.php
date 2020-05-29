@@ -151,8 +151,8 @@ $cnt=$cnt+1;
 									</thead>
 								<tbody>
 
-	<?php
-$staus = "1";
+								<?php
+								$staus = "1";
 								$sql="SELECT * from  invoices WHERE status= :staus and client_id=:client_id order by invoice_date desc";
 								$query = $dbh -> prepare($sql);
 								$query->bindParam(':staus',$staus,PDO::PARAM_STR);
@@ -180,17 +180,7 @@ $staus = "1";
 									{
 										$client_name = $rowclient->ContactName;
 									}
-
-									$sql_service="SELECT service_charge from  services WHERE service_id= :service_i";
-									$query_service = $dbh -> prepare($sql_service);
-									$query_service->bindParam(':service_i',$service_id,PDO::PARAM_STR);
-									$query_service->execute();
-									$results_service=$query_service->fetchAll(PDO::FETCH_OBJ);
 									
-									foreach ($results_service as $rowservice) 
-									{
-										$scharge = $rowservice->service_charge;
-									}
 
 									$sql_items="SELECT amount_paid from  invoice_items WHERE invoice_id= :invoice_i";
 									$query_items = $dbh -> prepare($sql_items);
@@ -245,7 +235,7 @@ $staus = "1";
 									       	<td><?php  echo htmlentities($invoice_no);?></td>
 									       	<td style="width: 40%"><?php  echo htmlentities($client_name);?></td>
 									       	<td nowrap="nowrap"><?php  echo htmlentities(date('d-m-Y',strtotime($row->invoice_date)));?></td>
-									       	<td style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($scharge,2));?></td>
+									       	<td style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($row->service_charge,2));?></td>
 									        <td style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($row->amount,2));?></td>
 									       	<td style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($row->repayment_amount,2));?></td> 
 									       	<td style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($total_paid,2));?></td> 
@@ -253,12 +243,39 @@ $staus = "1";
 									         
 									        <td><?php echo $action;?></td>
 									     </tr>
-									     <?php $cnt=$cnt+1;}} ?>
+									     <?php $cnt=$cnt+1;
+									     $total_service_charge += $row->service_charge;
+									     $total_amount += $row->amount;
+									     $total_repayment_amount += $row->repayment_amount;
+									     $total_total_paid += $total_paid;
+									     $totla_balance_amt += $balance_amt;
+
+									 	}
+									     ?>
+
+									     <tr class="active">
+									      	<th colspan="4" style="text-align: center;">Totals</th>
+									       	
+									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($total_service_charge,2));?></th>
+									        <th style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($total_amount,2));?></th>
+									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($total_repayment_amount,2));?></th> 
+									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($total_total_paid,2));?></th> 
+									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo htmlentities(number_format($totla_balance_amt,2));?></th> 
+									         
+									        <th id="other"></th>
+									     </tr>
+
+
+
+									     <?php
+
+
+									 } ?>
 									     </tbody> </table> 
 	
-<p style="margin-top:1%"  align="center" id="other">
-  <i class="fa fa-print fa-2x" style="cursor: pointer;"  OnClick="window.print()" ></i>
-</p>
+							<p style="margin-top:1%"  align="center" id="other">
+							  <i class="fa fa-print fa-2x" style="cursor: pointer;"  OnClick="window.print()" ></i>
+							</p>
 
 							</div>
 

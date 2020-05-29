@@ -24,7 +24,7 @@ function getClientbalance($clientid, $dbh)
 
 		$repay_amt = $row->repayment_amount;
 
-		$sql_inv_items="SELECT sum(amount_paid) as amount_paid from  invoice_items WHERE invoice_id= :inv_id";
+		$sql_inv_items="SELECT sum(amount_paid) as amount_paid from  invoice_items WHERE invoice_id=:inv_id group by invoice_id";
 		$query_inv_items = $dbh -> prepare($sql_inv_items);
 		$query_inv_items->bindParam(':inv_id',$inv_id,PDO::PARAM_STR);
 		$query_inv_items->execute();
@@ -40,9 +40,9 @@ function getClientbalance($clientid, $dbh)
 
 		$total_repay_amt =$repay_amt + $total_repay_amt; 
 
-		$total_bal_due = $total_repay_amt - $total_amnt_paid;	
-
+		
 	}
+	$total_bal_due = $total_repay_amt - $total_amnt_paid;	
 	return $total_bal_due;
 
 }

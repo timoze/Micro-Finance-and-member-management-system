@@ -270,7 +270,7 @@ WinPrint.close();
    			data: rowData,
 		   	success: function(response)
 		   	{
-   					alert (response);
+   					//alert (response);
    					location.reload(true);
 
     			}

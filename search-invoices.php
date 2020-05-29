@@ -63,12 +63,12 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 							  <button type="submit" name="search" class="btn btn-primary btn-sm">Search</button> </form> 
 						</div>
 						<?php
-if(isset($_POST['search']))
-{ 
+						if(isset($_POST['search']))
+						{ 
 
-$sdata=$_POST['searchdata'];
-  ?>
-  <h4 align="center">Result against "<?php echo $sdata;?>" keyword </h4> 
+							$sdata=$_POST['searchdata'];
+  							?>
+  								<h4 align="center">Results against "<?php echo $sdata;?>" keyword(s) </h4> 
 								<table class="table" border="1"> <thead> <tr> <th>#</th> 
 									<th>Invoice Id</th>
 									 <th>Client Name</th> 
@@ -82,31 +82,21 @@ $sdata=$_POST['searchdata'];
 									   </thead>
 									    <tbody>
 									    	<?php
-$sql="SELECT distinct invoices.invoice_no, invoices.client_id, invoices.invoice_date, invoices.invoice_id, invoices.amount, invoices.repayment_amount, tblClient.NationalID, tblClient.Family, tblClient.ContactName from invoices join tblClient on tblClient.ID=invoices.client_id where (tblClient.NationalID like '%$sdata%' OR tblClient.ContactName like '%$sdata%' )";
-$query = $dbh -> prepare($sql);
-$query->execute();
-$results=$query->fetchAll(PDO::FETCH_OBJ);
+									$sql="SELECT distinct invoices.invoice_no, invoices.client_id, invoices.invoice_date, invoices.invoice_id, invoices.amount, invoices.repayment_amount, tblClient.NationalID, tblClient.Family, tblClient.ContactName from invoices join tblClient on tblClient.ID=invoices.client_id where (tblClient.NationalID like '%$sdata%' OR tblClient.ContactName like '%$sdata%' )";
+									$query = $dbh -> prepare($sql);
+									$query->execute();
+									$results=$query->fetchAll(PDO::FETCH_OBJ);
 
-$cnt=1;
-if($query->rowCount() > 0)
-{
-foreach($results as $row)
-{    
+									$cnt=1;
+									if($query->rowCount() > 0)
+									{
+									foreach($results as $row)
+									{    
 
-/*
-									$client_id = $row->client_id;
-									$sql_client="SELECT ContactName, Family, NationalID from  tblClient WHERE ID= :client_id";
-									$query_client = $dbh -> prepare($sql_client);
-									$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
-									$query_client->execute();
-									$results_client=$query_client->fetchAll(PDO::FETCH_OBJ);
-									
-									//foreach ($results_client as $rowclient) 
-									//{*/
 										$client_name = $row->ContactName;
 										$family = $row->Family;
 										$idno = $row->NationalID;
-									//}           ?>
+	          							?>
 									     <tr class="active">
 									      <th scope="row"><?php echo htmlentities($cnt);?></th>
 									       <td style="text-align: center;" nowrap="nowrap"><?php  echo htmlentities($row->invoice_no);?></td>

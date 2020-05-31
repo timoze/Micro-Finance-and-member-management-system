@@ -11,13 +11,13 @@ if (strlen($_SESSION['clientmsaid']==0)) {
     $AName=$_POST['adminname'];
   $mobno=$_POST['mobilenumber'];
   $email=$_POST['email'];
-  $sql="update tbladmin set AdminName=:adminname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
+  $sql="UPDATE tbladmin set AdminName=:adminname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
      $query = $dbh->prepare($sql);
      $query->bindParam(':adminname',$AName,PDO::PARAM_STR);
      $query->bindParam(':email',$email,PDO::PARAM_STR);
      $query->bindParam(':mobilenumber',$mobno,PDO::PARAM_STR);
      $query->bindParam(':aid',$adminid,PDO::PARAM_STR);
-$query->execute();
+    $query->execute();
 
     echo '<script>alert("Your profile has been updated")</script>';
     echo "<script>window.location.href ='admin-profile.php'</script>";

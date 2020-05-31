@@ -10,23 +10,20 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Client Management Sysytem || Manage Client </title>
-	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-	<!-- Bootstrap Core CSS -->
-	<link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
-	<!-- Custom CSS -->
-	<link href="css/style.css" rel='stylesheet' type='text/css' />
-	<!-- Graph CSS -->
-	<link href="css/font-awesome.css" rel="stylesheet"> 
-	<!-- jQuery -->
-	<link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'>
-	<!-- lined-icons -->
-	<link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
-	<!-- /js -->
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <!-- Graph CSS -->
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <!-- jQuery -->
+    <link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'>
+    <!-- lined-icons -->
+    <link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
+    <!-- /js -->
+    <script src="js/jquery-1.10.2.min.js"></script>
 
-	<link rel="stylesheet" href="datatables.net-bs/css/dataTables.bootstrap.min.css">
-	<script src="datatables.net/js/jquery.dataTables.min.js"></script>
-	<script src="datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 	<!-- //js-->
 </head> 
 <body>
@@ -55,7 +52,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 							<form name="form1" method="post" action="manage-client.php">
 							<div class="tables">
 							
-								<table class="table table-bordered table-hover dataTable" id="example" border="1"> 
+								<table class="table" border="1">
 									<thead> 
 										<tr> 
 											<th>#</th> 
@@ -98,7 +95,7 @@ $starting_limit = ($page-1)*$limit;
 
 
 $sql="SELECT * from tblclient limit :starting_limit, :limt";
-$query = $dbh -> prepare($sql);
+$query = $dbh->prepare($sql);
 $query->bindParam(':starting_limit',$starting_limit,PDO::PARAM_INT);
 $query->bindParam(':limt',$limit,PDO::PARAM_INT);
 $query->execute();
@@ -120,8 +117,6 @@ foreach($results as $row)
 	}
 
 	$i=$cnt-1;
-
-	//$load  = '<label class="ui-checkbox"><input type="checkbox" name = list'.$i.' value=list'.$i.'><span class="input-span"></span></label>';
 
 	$edit = '<a href="edit-client-details.php?editid='.$row->ID.'" title="Click to Edit" style="text-decoration:none">Edit</a>';
 
@@ -158,8 +153,8 @@ foreach($results as $row)
 
                         </ul>
 
-                    </div>';
-	?>
+                    </div>'; 
+                    ?>
 									     <tr class="active">
 									      	
 									      	<th scope="row"><?php echo htmlentities($cnt);?></th>
@@ -184,10 +179,6 @@ foreach($results as $row)
 									     </tr>
 
 										<input type=hidden name=client_id'<?php echo $row->ID;?>' value="">
-
-
-											
-
 
 									   	<?php $cnt=$cnt+1;}
 
@@ -234,17 +225,6 @@ foreach($results as $row)
 	</div>
 	<script>
 
-		$(function () {
-    		$('#example').DataTable({
-      		'paging'      : true,
-      		'lengthChange': true,
-      		'searching'   : true,
-      		'ordering'    : true,
-      		'info'        : true,
-      		'autoWidth'   : true
-    		}
-    	)
-  	})
 		var toggle = true;
 
 		$(".sidebar-icon").click(function() {                

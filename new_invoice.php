@@ -268,7 +268,7 @@ for ($k=0; $k < round($rate); $k++)
 						{
 
 							?>
-    			    		<option value="<?php  echo $row_clients->ID;?>"><?php  echo $row_clients->ContactName;?> (<?php  echo $client_bal;?>)</option>
+    			    		<option value="<?php  echo $row_clients->ID;?>"><?php  echo $row_clients->ContactName;?></option>
     			    
     			    		<?php 
     			    	}

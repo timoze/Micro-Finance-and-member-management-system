@@ -1,6 +1,6 @@
  <div class="sidebar-menu" id="other">
     <header class="logo">
-        <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="dashboard.php"> <span id="logo"> <h1>CMS</h1></span> 
+        <a href="#" class="sidebar-icon"> <span class="fa fa-bars"></span> </a> <a href="dashboard.php"> <span id="logo"> <h1><?php print $company_code;?></h1></span> 
             <!--<img id="logo" src="" alt="Logo"/>--> 
         </a> 
     </header>

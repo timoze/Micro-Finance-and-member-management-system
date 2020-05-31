@@ -53,7 +53,7 @@
 
                 </script>
               </li>
-              <p style="padding-top: 10px;color: white;text-align: center;">Techy Loan Services</p>                   
+              <p style="padding-top: 10px;color: white;text-align: center;"><?php print $company_name;?></p>                   
               <div class="clearfix"></div>  
             </ul>
           </div>

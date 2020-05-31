@@ -23,7 +23,10 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 	<!-- lined-icons -->
 	<link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
 	<!-- /js -->
-	<script src="js/jquery-1.10.2.min.js"></script>
+
+	<link rel="stylesheet" href="datatables.net-bs/css/dataTables.bootstrap.min.css">
+	<script src="datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 	<!-- //js-->
 </head> 
 <body>
@@ -52,7 +55,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 							<form name="form1" method="post" action="manage-client.php">
 							<div class="tables">
 							
-								<table class="table" border="1"> 
+								<table class="table table-bordered table-hover dataTable" id="example" border="1"> 
 									<thead> 
 										<tr> 
 											<th>#</th> 
@@ -230,6 +233,18 @@ foreach($results as $row)
 		<div class="clearfix"></div>		
 	</div>
 	<script>
+
+		$(function () {
+    		$('#example').DataTable({
+      		'paging'      : true,
+      		'lengthChange': true,
+      		'searching'   : true,
+      		'ordering'    : true,
+      		'info'        : true,
+      		'autoWidth'   : true
+    		}
+    	)
+  	})
 		var toggle = true;
 
 		$(".sidebar-icon").click(function() {                

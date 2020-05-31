@@ -50,7 +50,7 @@ echo "<script>alert('Invalid Details');</script>";
 	<div class="error_page">
 
 		<div class="error-top">
-			<h2 class="inner-tittle page">CMS</h2>
+			<h2 class="inner-tittle page"><?php print $company_name?></h2>
 			<div class="login">
 				
 				<div class="buttons login">

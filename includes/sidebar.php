@@ -58,6 +58,19 @@ foreach($results as $row)
                    
                 </ul>
             </li>
+
+             <li id="menu-academico" ><a href="#"><i class="fa fa-table"></i> <span> Reports</span> <span class="fa fa-angle-right" style="float: right"></span></a>
+                <ul id="menu-academico-sub" >
+                    <li id="menu-academico-avaliacoes" ><a href="clients_with_outstanding_balances.php"> Clients With Balances</a></li>
+                    <li id="menu-academico-boletim" ><a href="paid_clients.php">Clients with no Balances</a></li>
+                    <li id="menu-academico-boletim" ><a href="debtors_aging.php">Debtors Aging Report</a></li>
+                   
+                </ul>
+            </li>
+
+
+
+
             <li><a href="search-invoices.php"><i class="fa fa-search"></i> <span>Search Invoice</span></a></li>
             
       

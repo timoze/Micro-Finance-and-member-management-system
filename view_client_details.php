@@ -5,6 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['clientmsaid']==0)) {
   header('location:logout.php');
   } else{
+  	$com_nam = $company_name;
   	?>
 
 <!DOCTYPE HTML>
@@ -80,6 +81,7 @@ $client_id=intval($_GET['client_id']);
 		$GuarantorID = $rowclient->GuarantorID;
 		//$guarantor = $rowclient->guarantor;
 		$path = $rowclient->path;
+		$collateral = $rowclient->Notes;
 	}
 
 
@@ -88,7 +90,7 @@ $client_id=intval($_GET['client_id']);
 	?>
 						<div class="graph">
 							<div class="tables">
-								<h4>SANTALINK COMPANY LTD</h4>
+								<h4><?php print $com_nam;?></h4>
 									<table class="table table-bordered" width="100%" border="1"> 
 							<tr>
 								<th colspan="3" style="text-align: center;">Client Details</th>	
@@ -117,6 +119,11 @@ $client_id=intval($_GET['client_id']);
 							 <tr> 
 								<th>Family</th> 
 								<td><?php echo htmlentities($family);?></td>
+							</tr> 
+							<tr>
+								<th>Collateral</th> 
+								<td colspan="2"><?php echo  htmlentities($collateral);?></td> 
+								
 							</tr> 
 							<tr>
 								<th colspan="3" style="text-align: center;">Guarantor Details</th>	

@@ -96,6 +96,35 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 										$client_name = $row->ContactName;
 										$family = $row->Family;
 										$idno = $row->NationalID;
+
+										$view = '<a href="view-invoice.php?invoiceid='.$row->invoice_id.'" title="Click to View" style="text-decoration:none">View</a>';
+
+										$edit = '<a href="edit_invoice_details.php?editid='.$row->invoice_id.'" title="Click to Edit" style="text-decoration:none">Edit</a>';
+
+										$makepayments = '<a href="invoice_payment.php?invoiceid='.$row->invoice_id.'" title="Click to Edit" style="text-decoration:none">Make Payments</a>';
+
+										$delete = '<a href="delete_invoice.php?invoice_id='.$row->invoice_id.'" title="Click to Delete" style="text-decoration:none">Delete</a>';
+
+										$action = '<div class="dropdown">
+
+                  										<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-cogs"></i> Actions
+
+                        								<span class="caret"></span></button>
+
+                        								<ul class="dropdown-menu">
+
+                        									<li>'.$edit.'</li>
+
+                         								   	<li>'.$view.'</li>
+
+                         								   	<li>'.$makepayments.'</li> 
+
+                         								   	<li>'.$delete.'</li>                                                 
+
+                       								 </ul>
+
+                   								 </div>';
+
 	          							?>
 									     <tr class="active">
 									      <th scope="row"><?php echo htmlentities($cnt);?></th>
@@ -107,7 +136,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									       <td style="text-align: center;"><?php  echo number_format(htmlentities($row->amount));?></td>
 									       <td style="text-align: center;"><?php  echo number_format(htmlentities($row->repayment_amount));?></td>
 									         
-									        <td><a href="view-invoice.php?invoiceid=<?php  echo $row->invoice_id;?>">View</a></td>
+									        <td><?php print $action;?></td>
 									     </tr>
 									     <?php $cnt=$cnt+1;}}} ?>
 									     </tbody> </table> 

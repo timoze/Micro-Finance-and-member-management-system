@@ -65,6 +65,7 @@ foreach($results as $row)
                     <li id="menu-academico-avaliacoes" ><a href="clients_with_outstanding_balances.php"> Clients With Balances</a></li>
                     <li id="menu-academico-boletim" ><a href="paid_clients.php">Clients with no Balances</a></li>
                     <li id="menu-academico-boletim" ><a href="debtors_aging.php">Debtors Aging Report</a></li>
+                    <li id="menu-academico-avaliacoes" ><a href="clients_loans_given.php">Loans Given</a></li>
                    
                 </ul>
             </li>

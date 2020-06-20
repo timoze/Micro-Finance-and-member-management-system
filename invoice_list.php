@@ -158,14 +158,14 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 
                          								   	<li>'.$view.'</li>
 
-                         								   	<li>'.$makepayments.'</li> 
-
-                         								   	<li>'.$delete.'</li>                                                 
+                         								   	<li>'.$makepayments.'</li>                                               
 
                        								 </ul>
 
                    								 </div>';
 
+                   					if ($balance_amt>0) {
+                   						
 
 									?>
 									    <tr class="active">
@@ -183,11 +183,13 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									     </tr>
 
 									     <?php $cnt=$cnt+1;
+
 									     $total_service_charge += $row->service_charge;
 									     $total_amount += $row->amount;
 									     $total_repayment_amount += $row->repayment_amount;
 									     $total_total_paid += $total_paid;
 									     $totla_balance_amt += $balance_amt;
+									 }
 									 }
 									 ?>
 

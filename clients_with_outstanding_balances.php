@@ -227,12 +227,34 @@ foreach($results as $row)
 										<input type=hidden name=client_id'<?php echo $row->ID;?>' value="">
 
 									   	<?php $cnt=$cnt+1;
-									   	# code...
+									   	$total_repay += $client_bal[0];
+									   	$total_paid += $client_bal[1];
+									   	$total_bal += $client_balance;
                     				}
 
-									}
+								}
+								?>
 
-									   	}?>
+										<tr class="active">
+									      	
+									      	<th colspan="4" style="text-align: center;">Totals</th>
+									      
+									        <th style="text-align: right;"><?php print number_format($total_repay,2);?></th>
+
+									       	<th style="text-align: right;"><?php print number_format($total_paid,2);?></th>
+
+									       <th style="text-align: right;"><?php print number_format($total_bal,2);?></th>
+									        
+									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
+									        
+									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
+									        
+									     </tr>
+
+
+									<?php
+
+						}?>
 									     </tbody> </table> 
 							</div>
 						</form>

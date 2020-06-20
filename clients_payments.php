@@ -2,7 +2,7 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-function getClientbalance($clientid, $dbh)
+function getClientbalance($clientid, $date1, $date2, $dbh)
 
 {	
 	//CHECK CLIENT INVOICES
@@ -17,7 +17,6 @@ function getClientbalance($clientid, $dbh)
 	$total_amnt_paid = 0;
 	$total_repay_amt = 0;
 	$total_bal_due = 0;
-	//$date_array[] = "";
 
 	foreach($results as $row)
 	{
@@ -25,9 +24,11 @@ function getClientbalance($clientid, $dbh)
 
 		$repay_amt = $row->repayment_amount;
 
-		$sql_inv_items="SELECT sum(amount_paid) as amount_pai, max(repayment_date) as repayment_date from  invoice_items WHERE invoice_id=:inv_id group by invoice_id";
+		$sql_inv_items="SELECT sum(amount_paid) as amount_pai from  invoice_items WHERE invoice_id=:inv_id and date_paid between :date1 and :date2 group by invoice_id";
 		$query_inv_items = $dbh -> prepare($sql_inv_items);
 		$query_inv_items->bindParam(':inv_id',$inv_id,PDO::PARAM_STR);
+		$query_inv_items->bindParam(':date1',$date1,PDO::PARAM_STR);
+		$query_inv_items->bindParam(':date2',$date2,PDO::PARAM_STR);
 		$query_inv_items->execute();
 		$results_items=$query_inv_items->fetchAll(PDO::FETCH_OBJ);
 		$amnt_paid = 0;
@@ -35,7 +36,6 @@ function getClientbalance($clientid, $dbh)
 		{
 			$amnt_pa = $rs->amount_pai;
 			$amnt_paid = $amnt_paid+$amnt_pa;
-			$date_array[] = strtotime($rs->repayment_date);
 		}
 									
 		//$amnt_paid = $results_items->amount_pai;
@@ -45,32 +45,59 @@ function getClientbalance($clientid, $dbh)
 		$total_repay_amt =$repay_amt + $total_repay_amt; 
 
 	}
-	$date_repay_max = max($date_array);
-	$total_bal_due = array($total_repay_amt,$total_amnt_paid, $date_repay_max);	
-	return $total_bal_due;
+	//$total_bal_due[] = $total_amnt_paid;	
+	return $total_amnt_paid;
 
 }
 if (strlen($_SESSION['clientmsaid']==0)) {
   header('location:logout.php');
   } else{
+
+  	if (isset($_GET['date2'])) {
+  		$date1 = date('Y-m-d',strtotime($_GET['date1']));
+  	}else{
+  		$date1 = date('Y-m-d');
+  	}
+
+  	if (isset($_GET['date2'])) {
+  		$date2 = date('Y-m-d',strtotime($_GET['date2']));
+  	}else{
+  		$date2 = date('Y-m-d');
+  	}
+
+  	if (strtotime($date1)==strtotime($date2)) {
+  		$desc = "On ". date('d-m-Y', strtotime($date1)); 
+  	}else{
+  		$desc = "From: " .date("d-m-Y",strtotime($date1))." to ". date("d-m-Y", strtotime($date2));
+  	}
+
+  	   
   	?>
 
 <!DOCTYPE HTML>
 <html>
 <head>
     <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
-    <!-- Custom CSS -->
-    <link href="css/style.css" rel='stylesheet' type='text/css' />
-    <!-- Graph CSS -->
-    <link href="css/font-awesome.css" rel="stylesheet">
-    <!-- jQuery -->
-    <link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'>
-    <!-- lined-icons -->
-    <link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
-    <!-- /js -->
-    <script src="js/jquery-1.10.2.min.js"></script>
+
+  <!-- Bootstrap Core CSS -->
+	<link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+	<!-- Custom CSS -->
+	<link href="css/style.css" rel='stylesheet' type='text/css' />
+	<!-- Graph CSS -->
+	<link href="css/font-awesome.css" rel="stylesheet"> 
+	<!-- jQuery -->
+	<link href='//fonts.googleapis.com/css?family=Roboto:700,500,300,100italic,100,400' rel='stylesheet' type='text/css'>
+	<!-- lined-icons -->
+	<link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
+	<!-- //lined-icons -->
+	<script src="js/jquery-3.5.0.min.js"></script>
+	<link href="css/jquery-ui.css" rel='stylesheet' type='text/css' />
+	<script src="js/jquery-ui.js"></script>
+	<!--clock init-->
+	<script src="js/css3clock.js"></script>
+	<!--Easy Pie Chart-->
+	<!--skycons-icons-->
+	<script src="js/skycons.js"></script>
 
 	<!-- //js-->
 </head> 
@@ -88,16 +115,48 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 					<div class="sub-heard-part">
 						<ol class="breadcrumb m-b-0">
 							<li><a href="dashboard.php">Home</a></li>
-							<li class="active">Debtors Aging Report</li>
+							<li class="active">Amount Received </li>
 						</ol>
 					</div>
 					<!--//sub-heard-part-->
 					<div class="graph-visual tables-main">
 						
 					
-						<h3 class="inner-tittle two">Debtors Aging</h3>
+						<h3 class="inner-tittle two">Amount Received <?php echo $desc; ?></h3>
+						<div class="container">
+							<form method="post" name="search" action="clients_payments.php">
+  
+							 <div class="form-group row">
+							 	<div class="col-xs-6 col-sm-4">
+							 		<input id="date_from" type="text" name="date_from" required="true"  value="<?php echo date('m/d/Y',strtotime($date1));?>"  class="form-control datepick">
+							 	</div>
+							 	<div class="col-xs-6 col-sm-4">
+							 		<input id="date_to" type="text" name="date_to" value="<?php echo date('m/d/Y',strtotime($date2));?>" required="true" class="form-control datepick2">
+							 	</div>
+							 	<div class="col-xs-6 col-sm-4">
+							 		<button type="submit" name="search" class="btn btn-primary btn-sm">Search</button> 
+							 	</div>
+							 </div>
+							  </form> 
+						</div>
+						<?php
+						if(isset($_POST['search']))
+						{ 
+
+							$date_from=$_POST['date_from'];
+							$date_to=$_POST['date_to'];
+
+							$url = "clients_payments.php?date1=$date_from&date2=$date_to";
+
+							
+							print "<script language='javascript'>window.location.href = '".$url."';</script>";
+
+							
+
+						}
+						?>
 						<div class="graph">
-							<form name="form1" method="post" action="manage-client.php">
+							<form name="form1" method="post" action="clients_payments.php">
 							<div class="tables">
 							
 								<table class="table" border="1">
@@ -107,14 +166,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 											<th>Client Name</th>
 											<th>Client Home</th>
 											<th>Client Contacts</th>
-											<th>Repayment<BR>Amount</th>
-									 		<th>Amount<br>Paid</th>
-									 		<th>Balance<br><=30 Days</th>
-									 		<th>Balance<br><=60 Days</th>
-									 		<th>Balance<br><=90 Days</th>
-									 		<th>Balance<br>>90 Days</th>
-
-									 		<th>Status</th>
+									 		<th>Amount<br>Received</th>
 								
 									 		<th>Action</th>
 									  	</tr>
@@ -183,8 +235,8 @@ foreach($results as $row)
 
 	$client_passport = '<a href="client_passport.php?client_id='.$row->ID.'" title="Click to Upload Client Passport" style="text-decoration:none">Upload Passport</a>';
 	
-	$client_bal = getClientbalance($row->ID, $dbh);
-	$client_balance = $client_bal[0]-$client_bal[1];
+	$client_bal = getClientbalance($row->ID, $date1, $date2, $dbh);
+	//$client_balance = $client_bal[0]-$client_bal[1];
 	
 
 	$action = '<div class="dropdown">
@@ -206,15 +258,9 @@ foreach($results as $row)
                         </ul>
 
                     </div>'; 
-                    if ($client_balance>0) {
-
-                    	$days_with_no_pay = round(strtotime($client_bal[2])- strtotime(date('d-m-Y')) / (60 * 60 * 24));
-
-                       	$less_than30 =	30;
-                       	$less_than60 =	60;
-                       	$less_than90 =	90;
-                       //	$more_than90 =	strtotime(date('d-m-Y -30 days'));
-                   
+                    if ($client_bal>0) 
+                    {
+                    	
                     ?>
 									     <tr class="active">
 									      	
@@ -225,97 +271,41 @@ foreach($results as $row)
 									        <td>Cell No. - <?php  echo htmlentities($row->Clientphnumber);?><br>
 									        	 </td>
 
-									        <td style="text-align: right;"><?php print number_format($client_bal[0],2);?></td>
-
-									       	<td style="text-align: right;"><?php print number_format($client_bal[1],2);?></td>
-
-									       	<?php
-									       		if ($days_with_no_pay<=$less_than30) 
-									       		{
-									       			?>
-									       				<td style="text-align: center;" nowrap="nowrap"><?php  echo number_format($client_balance,2);?></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       			<?php
-									       			$total_less_30 += $client_balance; 
-									       		}
-									       		elseif ($days_with_no_pay>$less_than30 && $days_with_no_pay<=$less_than60) 
-									       		{
-									       			?>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"><?php  echo number_format($client_balance,2);?></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       			<?php
-									       			$total_less_60 += $client_balance; 
-									       		}
-									       		elseif ($days_with_no_pay>$less_than60 && $days_with_no_pay<=$less_than90) 
-									       		{
-									       			?>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"><?php  echo number_format($client_balance,2);?></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       			<?php
-									       			$total_less_90 += $client_balance; 
-									       		}
-									       		elseif ($days_with_no_pay>$less_than90) 
-									       		{
-									       			?>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"></td>
-									       				<td style="text-align: center;" nowrap="nowrap"><?php  echo number_format($client_balance,2);?></td>
-									       			<?php
-									       			$total_more_90 += $client_balance; 
-									       		}
-									       		
-									       	?>
+									       	<td style="text-align: right;"><?php print number_format($client_bal,2);?></td>
 									        
-									        <td style="text-align: center;" nowrap="nowrap"><?php  echo $status;?></td>
-									        
+
 									        <td style="text-align: center;" nowrap="nowrap"><?php  echo $action;?></td>
 									        
 									     </tr>
 
 										<input type=hidden name=client_id'<?php echo $row->ID;?>' value="">
 
-									   	<?php $cnt=$cnt+1;
-									   	$total_gvn += $client_bal[0];
-									   	$total_rcvd += $client_bal[1];
+									   	<?php 
+									   	$cnt=$cnt+1;
+
+									   	$total_received += $client_bal; 
+                    				
                     				}
 
-							}
+									}
+									?>
 
-							?>
-							 	<tr class="active">
+									<tr class="active">
 									      	
-									      	<th colspan="4" style="text-align: center;">Totals</th>
+									      	<th colspan="4" style="text-align: center;">Total Received</th>
 									      
-									       
-
-									        <th style="text-align: right;"><?php print number_format($total_gvn,2);?></th>
-
-									       	<th style="text-align: right;"><?php print number_format($total_rcvd,2);?></th>
-
-									       	
-									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_30,2);?></th>
-									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_60,2);?></th>
-									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_90,2);?></th>
-									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_more_90,2);?></th>
-									    
+									        <th style="text-align: right;"><?php print number_format($total_received,2);?></th>
 									        
-									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
-									        
-									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
+
+									        <th>&nbsp;</th>
 									        
 									     </tr>
 
+									     <?php
 
-							<?php
 
-			}?>
+
+									   	}?>
 									     </tbody> </table> 
 							</div>
 						</form>
@@ -355,30 +345,10 @@ foreach($results as $row)
 			toggle = !toggle;
 		});
 
-		var checkflag = "false";
-		function check(field)
-		{
-			if (checkflag == "false") 
-			{
-				for (i = 0; i < field.length; i++) 
-				{
-					field[i].checked = true;
-				}
-				checkflag = "true";
-				<? $checkflag  = '1' ?>
-				return "Uncheck All"; 
-			}
-			else 
-			{
-				for (i = 0; i < field.length; i++) 
-				{
-					field[i].checked = false; 
-				}
-				checkflag = "false";
-				<? $checkflag  = '0' ?>
-				return "Check All"; 
-			}
-		}
+		$( function() {
+    		$(".datepick").datepicker();
+    		$(".datepick2").datepicker();
+    	});
 	</script>
 	<!--js -->
 	<script src="js/jquery.nicescroll.js"></script>

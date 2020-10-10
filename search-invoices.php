@@ -82,7 +82,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									   </thead>
 									    <tbody>
 									    	<?php
-									$sql="SELECT distinct invoices.invoice_no, invoices.client_id, invoices.invoice_date, invoices.invoice_id, invoices.amount, invoices.repayment_amount, tblClient.NationalID, tblClient.Family, tblClient.ContactName from invoices join tblClient on tblClient.ID=invoices.client_id where (tblClient.NationalID like '%$sdata%' OR tblClient.ContactName like '%$sdata%' )";
+									$sql="SELECT distinct invoices.invoice_no, invoices.client_id, invoices.invoice_date, invoices.invoice_id, invoices.amount, invoices.repayment_amount, tblclient.NationalID, tblclient.Family, tblclient.ContactName from invoices join tblclient on tblclient.ID=invoices.client_id where (tblclient.NationalID like '%$sdata%' OR tblclient.ContactName like '%$sdata%' )";
 									$query = $dbh -> prepare($sql);
 									$query->execute();
 									$results=$query->fetchAll(PDO::FETCH_OBJ);

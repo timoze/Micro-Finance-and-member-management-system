@@ -208,13 +208,15 @@ for ($k=0; $k < round($rate); $k++)
 	<!--Easy Pie Chart-->
 	<!--skycons-icons-->
 	<script src="js/skycons.js"></script>
+	<link href="select2/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="select2/dist/js/select2.min.js"></script>
 	<!--//skycons-icons-->
 </head> 
 <body>
 <div class="page-container">
 <!--/content-inner-->
 <div class="left-content">
-<div class="inner-content">
+<div class="inner-content scrollable-row">
 	
 <?php include_once('includes/header.php');?>
 				<!--//outer-wp-->
@@ -242,7 +244,7 @@ for ($k=0; $k < round($rate); $k++)
 	<div class="form-group"> 
 		<label for="exampleInputEmail1">Client</label> 
 
-		<select name="client_id" placeholder="Select Client ..." class="form-control" required='true'>
+		<select name="client_id" placeholder="Select Client ..." class="form-control client_id" required='true'>
 			<option value=""></option>
 
 			<?php
@@ -286,7 +288,7 @@ for ($k=0; $k < round($rate); $k++)
 	</div>
 	<div class="form-group"> <label for="exampleInputEmail1">Service</label> 
 		
-		<select name="service_id" placeholder="Select Service Category ..." class="form-control" required='true'>
+		<select name="service_id" placeholder="Select Service Category ..." class="form-control service_id" required='true'>
 			<option value=""></option>
 
 			<?php
@@ -353,6 +355,13 @@ for ($k=0; $k < round($rate); $k++)
     		$(".datepick").datepicker();
     		$(".datepick2").datepicker();
     	});
+
+
+    	// In your Javascript (external .js resource or <script> tag)
+		$(document).ready(function() {
+    		$('.client_id').select2();
+    		$('.service_id').select2();
+		});
 	</script>
 	<!--js -->
 	<script src="js/jquery.nicescroll.js"></script>

@@ -29,7 +29,26 @@ if (strlen($_SESSION['clientmsaid']==0)) {
  $guarantor_id=$_POST['guarantor_id'];
  $national_id = $_POST['national_id'];
 
- 
+
+$query_client_n_id="SELECT NationalID from tblclient ";
+$query_client_n_id = $dbh -> prepare($query_client_n_id);
+$query_client_n_id->execute();
+$result_client_n_id = $query_client_n_id->fetchAll(PDO::FETCH_OBJ);
+
+//$result_invoice = $row_service;
+$national_id_array = array();
+foreach($result_client_n_id  as $row_client_n_id)
+{
+	$national_id_array[] = $row_client_n_id->NationalID;
+}
+
+if (in_array($national_id, $national_id_array)) {
+
+		echo '<script>alert("Existing Client! Please check from your client list.")</script>';
+		echo "<script>window.location.href ='add-client.php'</script>";
+
+
+}else{
 $sql="insert into tblclient(ContactName,CompanyName,Address,City,Family,Clientphnumber,Guarantorphnumber,Email,Notes,NationalID, Guarantor, GuarantorID)values(:cname,:comname,:address,:city,:state,:wphnumber,:guarantor_cell,:email,:notes,:national_id,:guarantor,:gurantorid)";
 $query=$dbh->prepare($sql);
 
@@ -47,17 +66,19 @@ $query->bindParam(':notes',$notes,PDO::PARAM_STR);
 $query->bindParam(':national_id',$national_id,PDO::PARAM_STR);
 $query->bindParam(':guarantor',$guarantor,PDO::PARAM_STR);
 $query->bindParam(':gurantorid',$guarantor_id,PDO::PARAM_STR);
- $query->execute();
+$query->execute();
 
    $LastInsertId=$dbh->lastInsertId();
    if ($LastInsertId>0) {
-    echo '<script>alert("Client has been added.")</script>';
-echo "<script>window.location.href ='add-client.php'</script>";
+    	echo '<script>alert("Client has been added.")</script>';
+		echo "<script>window.location.href ='add-client.php'</script>";
   }
   else
     {
          echo '<script>alert("Something Went Wrong. Please try again")</script>';
     }
+
+}
 
   
 }

@@ -22,9 +22,11 @@ if (strlen($_SESSION['clientmsaid']==0)) {
     <!-- lined-icons -->
     <link rel="stylesheet" href="css/icon-font.min.css" type='text/css' />
     <!-- /js -->
-    <script src="js/jquery-1.10.2.min.js"></script>
-
-	<!-- //js-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"/>
+	<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+	<script src="js/jquery-3.5.0.min.js"></script>
+	<link href="css/jquery-ui.css" rel='stylesheet' type='text/css' />
+	<script src="js/jquery-ui.js"></script>
 </head> 
 <body>
 	<div class="page-container">
@@ -48,11 +50,24 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 						
 					
 						<h3 class="inner-tittle two">Manage Clients </h3>
+						<div class="container">
+							<form method="post" name="search" action="manage-client.php">
+  
+							 <div class="form-group row">
+							 	<div class="col-xs-6 col-sm-8">
+							 		<input id="client_name" type="text" name="client_name" required="true"  value="" placeholder="Search Name / ID" class="form-control">
+							 	</div>
+							 	<div class="col-xs-6 col-sm-4">
+							 		<button type="submit" name="search" class="btn-sm btn-primary">Search</button> 
+							 	</div>
+							 </div>
+							  </form> 
+						</div>
 						<div class="graph">
 							<form name="form1" method="post" action="manage-client.php">
 							<div class="tables">
 							
-								<table class="table" border="1">
+								<table class="table" id="example_table" border="1">
 									<thead> 
 										<tr> 
 											<th>#</th> 
@@ -70,11 +85,17 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									</thead>
 							<tbody>
 <?php
+if(isset($_POST['search']))
+{ 
+    $client_name=$_POST['client_name']; 
 
-
-
+    $search_query = " where (NationalID like '%$client_name%' OR ContactName like '%$client_name%' ) ";
+}
+else{
+    $search_query= "";
+}
 $limit = 50;
-$quer = "SELECT * FROM tblclient";
+$quer = "SELECT * FROM tblclient $search_query ";
 
 $s = $dbh->prepare($quer);
 //$s->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
@@ -94,7 +115,7 @@ if (!isset($_GET['page'])) {
 $starting_limit = ($page-1)*$limit;
 
 
-$sql="SELECT * from tblclient limit :starting_limit, :limt";
+$sql="SELECT * from tblclient $search_query limit :starting_limit, :limt";
 $query = $dbh->prepare($sql);
 $query->bindParam(':starting_limit',$starting_limit,PDO::PARAM_INT);
 $query->bindParam(':limt',$limit,PDO::PARAM_INT);
@@ -132,7 +153,7 @@ foreach($results as $row)
 	$print = '<a href="view_client_details.php?client_id='.$row->ID.'" title="Click to View Client Details" style="text-decoration:none">Print</a>';
 
 	$client_passport = '<a href="client_passport.php?client_id='.$row->ID.'" title="Click to Upload Client Passport" style="text-decoration:none">Upload Passport</a>';
-	
+	$delete = '<a href="delete_client.php?client_id='.$row->ID.'" title="Click to Delete" style="text-decoration:none">Delete Client</a>';
 	
 
 	$action = '<div class="dropdown">
@@ -149,7 +170,8 @@ foreach($results as $row)
 
                             <li>'.$view_details.'</li>   
                             <li>'.$print.'</li>  
-                            <li>'.$client_passport.'</li>                                               
+                            <li>'.$client_passport.'</li>   
+                            <li>'.$delete.'</li>                                            
 
                         </ul>
 
@@ -159,22 +181,22 @@ foreach($results as $row)
 									      	
 									      	<th scope="row"><?php echo htmlentities($cnt);?></th>
 									      
-									        <td><?php  echo htmlentities($row->ContactName);?></td> 
-									        <td><?php  echo htmlentities($row->Family);?></td> 
-									        <td>Cell No. - <?php  echo htmlentities($row->Clientphnumber);?><br>
+									        <td valign="top"><?php  echo htmlentities($row->ContactName);?></td> 
+									        <td valign="top"><?php  echo htmlentities($row->Family);?></td> 
+									        <td valign="top">Cell No. - <?php  echo htmlentities($row->Clientphnumber);?><br>
 									        	 </td>
 
-									        <td><?php  echo htmlentities($row->NationalID);?></td>
+									        <td valign="top"><?php  echo htmlentities($row->NationalID);?></td>
 
-									       	<td><?php  echo htmlentities($row->CompanyName);?></td>
+									       	<td valign="top"><?php  echo htmlentities($row->CompanyName);?></td>
 
-									       	<td>Name. - <?php  echo htmlentities($row->Guarantor);?><br>
+									       	<td valign="top">Name. - <?php  echo htmlentities($row->Guarantor);?><br>
 									        	Cell - <?php  echo htmlentities($row->Guarantorphnumber);?><br>
 									        	ID/Passport - <?php echo htmlentities($row->GuarantorID);?></td>
 									        
-									        <td style="text-align: center;" nowrap="nowrap"><?php  echo $status;?></td>
+									        <td valign="top" style="text-align: center;" nowrap="nowrap"><?php  echo $status;?></td>
 									        
-									        <td style="text-align: center;" nowrap="nowrap"><?php  echo $action;?></td>
+									        <td  valign="top"style="text-align: center;" nowrap="nowrap"><?php  echo $action;?></td>
 									        
 									     </tr>
 
@@ -268,6 +290,10 @@ foreach($results as $row)
 				return "Check All"; 
 			}
 		}
+
+		$(document).ready(function() {
+    		$('#example_table').DataTable();
+		} );
 	</script>
 	<!--js -->
 	<script src="js/jquery.nicescroll.js"></script>

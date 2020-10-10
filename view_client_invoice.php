@@ -61,7 +61,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 $client_id=intval($_GET['client_id']);
 
 
-	$sql_client="SELECT * from  tblClient WHERE ID= :client_id";
+	$sql_client="SELECT * from  tblclient WHERE ID= :client_id";
 	$query_client = $dbh -> prepare($sql_client);
 	$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 	$query_client->execute();
@@ -170,7 +170,7 @@ $cnt=$cnt+1;
 									$invoice_id = $row->invoice_id;
 									$invoice_no = $row->invoice_no;
 
-									$sql_client="SELECT ContactName from  tblClient WHERE ID= :client_id";
+									$sql_client="SELECT ContactName from  tblclient WHERE ID= :client_id";
 									$query_client = $dbh -> prepare($sql_client);
 									$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 									$query_client->execute();

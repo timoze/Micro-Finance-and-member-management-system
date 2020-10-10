@@ -76,7 +76,7 @@ foreach($results as $row)
 	$service_id = $row->service_id;
 	$invoice_id = $row->invoice_id;
 
-	$sql_client="SELECT ContactName, CompanyName, NationalID, Family from  tblClient WHERE ID= :client_id";
+	$sql_client="SELECT ContactName, CompanyName, NationalID, Family from  tblclient WHERE ID= :client_id";
 	$query_client = $dbh -> prepare($sql_client);
 	$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 	$query_client->execute();

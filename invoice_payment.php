@@ -10,7 +10,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Client Management Sysytem || Invoice Payment </title>
+	<title>Client Management System || Invoice Payment </title>
 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 	<!-- Bootstrap Core CSS -->
 	<link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
@@ -49,7 +49,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 		<div class="graph-visual tables-main" id="exampl">
 						
 					
-						<h3 class="inner-tittle two">Invoice Pyament </h3>
+						<h3 class="inner-tittle two">Invoice Payment </h3>
 <?php
 $invid=intval($_GET['invoiceid']);
 
@@ -70,7 +70,7 @@ foreach($results as $row)
 	$service_id = $row->service_id;
 	$invoice_id = $row->invoice_id;
 
-	$sql_client="SELECT ContactName, CompanyName, Cellphnumber, Family from  tblClient WHERE ID= :client_id";
+	$sql_client="SELECT ContactName from  tblclient WHERE ID= :client_id";
 	$query_client = $dbh -> prepare($sql_client);
 	$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 	$query_client->execute();
@@ -79,8 +79,6 @@ foreach($results as $row)
 	foreach ($results_client as $rowclient) 
 	{
 		$client_name = $rowclient->ContactName;
-		$company_name = $rowclient->CompanyName;
-		$cellphnumber = $rowclient->Cellphnumber;
 	}
  }
 }
@@ -120,7 +118,7 @@ foreach($results as $row)
 		foreach($rs as $row1)
 		{   
 			$datepai =    $row1->date_paid;
-			if ($datepai== "0000-00-00") 
+			if ($datepai== "0000-00-00" || $datepai=="") 
 			{
 			    $datepaid = date("Y-m-d");
 			         

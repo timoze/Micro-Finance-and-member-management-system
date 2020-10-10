@@ -56,6 +56,19 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 						
 					
 						<h3 class="inner-tittle two">Invoice List </h3>
+						<div class="container">
+							<form method="post" name="search" action="invoice_list.php">
+  
+							 <div class="form-group row">
+							 	<div class="col-xs-6 col-sm-8">
+							 		<input id="client_name" type="text" name="client_name" required="true"  value="" placeholder="Search Name / ID" class="form-control">
+							 	</div>
+							 	<div class="col-xs-6 col-sm-4">
+							 		<button type="submit" name="search" class="btn-sm btn-primary">Search</button> 
+							 	</div>
+							 </div>
+							  </form> 
+						</div>
 						<div class="graph">
 							<div class="tables">
 								<table class="table" border="1"> 
@@ -76,8 +89,17 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									</thead>
 								<tbody>
 								<?php
+								if(isset($_POST['search']))
+								{ 
+									$client_name=$_POST['client_name']; 
+								
+									$search_query = " AND client_id IN (SELECT ID FROM tblclient WHERE ( (NationalID like '%$client_name%' OR ContactName like '%$client_name%' ) )) ";
+								}
+								else{
+									$search_query= "";
+								}
 								$staus = "1";
-								$sql="SELECT * from  invoices WHERE status= :staus order by invoice_date desc";
+								$sql="SELECT * from  invoices WHERE status= :staus $search_query order by invoice_date desc";
 								$query = $dbh -> prepare($sql);
 								$query->bindParam(':staus',$staus,PDO::PARAM_STR);
 								$query->execute();
@@ -98,7 +120,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 									$invoice_id = $row->invoice_id;
 									$invoice_no = $row->invoice_no;
 
-									$sql_client="SELECT ContactName from  tblClient WHERE ID= :client_id";
+									$sql_client="SELECT ContactName from  tblclient WHERE ID= :client_id";
 									$query_client = $dbh -> prepare($sql_client);
 									$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 									$query_client->execute();

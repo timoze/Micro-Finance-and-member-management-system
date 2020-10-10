@@ -13,11 +13,11 @@ if (isset($_GET['menucat_id']) && isset($_GET['id'])) {
   $sub_ids = $_GET['id'];
 }
 else{
-  $menu_ids = '9';
+  $menu_ids = '4';
   //$menu_ids = '42';
 }
 
-		if ($menu_ids==9) {
+		if ($menu_ids==4) {
            $hrefs = "dashboard.php";
         }
         else

@@ -81,9 +81,9 @@ $query->execute();
 	<script src="js/skycons.js"></script>
 	<!--//skycons-icons-->
 
-	<link href="select2-4.0.13/dist/cc/select2.min.css" rel="stylesheet" type="text/css">
-
-    <script type="text/javascript" src="select2-4.0.13/dist/js/select2.min.js"></script> 
+	<script src="js/skycons.js"></script>
+	<link href="select2/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="select2/dist/js/select2.min.js"></script>
 </head> 
 <body>
 <div class="page-container">
@@ -130,7 +130,7 @@ foreach($results as $rw)
 	<div class="form-group"> 
 		<label for="exampleInputEmail1">Client</label> 
 
-		<select name="client_id" id="client_id" placeholder="Select Client ..." class="form-control" required='true'>
+		<select name="client_id" id="client_id" placeholder="Select Client ..." class="form-control client_id" required='true'>
 			<option value=""></option>
 
 			<?php
@@ -205,6 +205,11 @@ foreach($results as $rw)
     		$(".datepick" ).datepicker();
     		$(".datepick2" ).datepicker();
     	});
+
+    	// In your Javascript (external .js resource or <script> tag)
+		$(document).ready(function() {
+    		$('.client_id').select2();
+		});
 
 
 

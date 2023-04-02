@@ -5,9 +5,9 @@ include('includes/dbconnection.php');
 function getClientbalance($clientid, $dbh)
 
 {	
-	//CHECK CLIENT INVOICES
 
-	$sql="SELECT invoice_id, repayment_amount from  invoices WHERE client_id= :clientid ";
+	//CHECK CLIENT INVOICES
+	$sql="SELECT invoice_id, repayment_amount, invoice_date from  invoices WHERE client_id= :clientid ";
 	$query_details = $dbh -> prepare($sql);
 	$query_details->bindParam(':clientid',$clientid,PDO::PARAM_STR);
 	$query_details->execute();
@@ -16,24 +16,25 @@ function getClientbalance($clientid, $dbh)
 
 	$total_amnt_paid = 0;
 	$total_repay_amt = 0;
-	$total_bal_due = 0;
-	//$date_array[] = "";
-
+	$total_bal_due = "";
+	$date_array[] = "";
+	$amnt_paid = 0;
 	foreach($results as $row)
 	{
 		$inv_id = $row->invoice_id;
 
 		$repay_amt = $row->repayment_amount;
+		$invoice_date = strtotime($row->invoice_date);
 
-		$sql_inv_items="SELECT sum(amount_paid) as amount_pai, max(repayment_date) as repayment_date from  invoice_items WHERE invoice_id=:inv_id group by invoice_id";
+		$sql_inv_items="SELECT amount_paid, repayment_date  from  invoice_items WHERE invoice_id=:inv_id";
 		$query_inv_items = $dbh -> prepare($sql_inv_items);
 		$query_inv_items->bindParam(':inv_id',$inv_id,PDO::PARAM_STR);
 		$query_inv_items->execute();
 		$results_items=$query_inv_items->fetchAll(PDO::FETCH_OBJ);
-		$amnt_paid = 0;
+		
 		foreach ($results_items as $rs) 
 		{
-			$amnt_pa = $rs->amount_pai;
+			$amnt_pa = $rs->amount_paid;
 			$amnt_paid = $amnt_paid+$amnt_pa;
 			$date_array[] = strtotime($rs->repayment_date);
 		}
@@ -46,6 +47,11 @@ function getClientbalance($clientid, $dbh)
 
 	}
 	$date_repay_max = max($date_array);
+	if ($total_amnt_paid<=0) {
+		$date_repay_max = $invoice_date;
+	}else{
+		$date_repay_max = max($date_array);
+	}
 	$total_bal_due = array($total_repay_amt,$total_amnt_paid, $date_repay_max);	
 	return $total_bal_due;
 
@@ -109,6 +115,7 @@ if (strlen($_SESSION['clientmsaid']==0)) {
 											<th>Client Contacts</th>
 											<th>Repayment<BR>Amount</th>
 									 		<th>Amount<br>Paid</th>
+											<th>Days in<br>Default</th>
 									 		<th>Balance<br><=30 Days</th>
 									 		<th>Balance<br><=60 Days</th>
 									 		<th>Balance<br><=90 Days</th>
@@ -141,6 +148,15 @@ if (!isset($_GET['page'])) {
 }
 
 */
+function convert_days($sum) {
+    $years = floor($sum / 365);
+    $months = floor(($sum - ($years * 365))/30.5);
+    $days = ($sum - ($years * 365) - ($months * 30.5));
+    //echo "Days received: " . $sum . " days <br />";
+    //echo $years . " years, " . $months . "months, " . $days . "days";
+	$days_desc = "(".$sum." Days) :<br> ".$years . "Y ".$months ."M " .$days."D";
+	return $days_desc;
+}
 
 $starting_limit = ($page-1)*$limit;
 
@@ -208,7 +224,9 @@ foreach($results as $row)
                     </div>'; 
                     if ($client_balance>0) {
 
-                    	$days_with_no_pay = round(strtotime($client_bal[2])- strtotime(date('d-m-Y')) / (60 * 60 * 24));
+						$strtotime_date = strtotime(date('d-m-Y'));
+
+                    	$days_with_no_pay = round(($strtotime_date-$client_bal[2]) / (60 * 60 * 24));
 
                        	$less_than30 =	30;
                        	$less_than60 =	60;
@@ -228,6 +246,7 @@ foreach($results as $row)
 									        <td style="text-align: right;"><?php print number_format($client_bal[0],2);?></td>
 
 									       	<td style="text-align: right;"><?php print number_format($client_bal[1],2);?></td>
+											<td style="text-align: right;" nowrap="nowrap"><?php print date("d-m-Y",$client_bal[2]) ."<br>".convert_days($days_with_no_pay);?></td>
 
 									       	<?php
 									       		if ($days_with_no_pay<=$less_than30) 
@@ -287,26 +306,25 @@ foreach($results as $row)
                     				}
 
 							}
+							$total_due = $total_less_30+$total_less_60+$total_less_90+$total_more_90;
 
 							?>
 							 	<tr class="active">
 									      	
-									      	<th colspan="4" style="text-align: center;">Totals</th>
+									      	<th colspan="5" style="text-align: center;">Totals</th>
+											  
 									      
 									       
 
 									        <th style="text-align: right;"><?php print number_format($total_gvn,2);?></th>
 
 									       	<th style="text-align: right;"><?php print number_format($total_rcvd,2);?></th>
-
-									       	
+								       	
 									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_30,2);?></th>
 									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_60,2);?></th>
 									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_less_90,2);?></th>
 									       	<th style="text-align: right;" nowrap="nowrap"><?php  echo number_format($total_more_90,2);?></th>
-									    
-									        
-									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
+									        <th style="text-align: center;" nowrap="nowrap"><?php  echo number_format($total_due,2);?></th>
 									        
 									        <th style="text-align: center;" nowrap="nowrap">&nbsp;</th>
 									        

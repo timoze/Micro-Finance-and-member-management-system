@@ -75,7 +75,7 @@ $client_id=intval($_GET['client_id']);
 		$family=$rowclient->Family;
 		$guarantor=$rowclient->Guarantor;
 		$phnumber=$rowclient->Clientphnumber;
-		$gphnumber = $rowclient->Guarantorphpnumber;
+		$gphnumber = $rowclient->Guarantorphnumber;
 	}
 
 
@@ -103,7 +103,7 @@ $client_id=intval($_GET['client_id']);
 								<td><?php echo htmlentities($family);?></td> 
 								
 								<th>Guarantor</th> 
-								<td><?php echo  htmlentities($row->guarantor);?></td> 
+								<td><?php echo  htmlentities($guarantor);?></td> 
 								<th>Guarantor Contact</th> 
 								<td><?php  echo htmlentities($gphnumber);?></td>
 							</tr> 

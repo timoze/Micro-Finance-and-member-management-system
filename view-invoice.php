@@ -76,7 +76,7 @@ foreach($results as $row)
 	$service_id = $row->service_id;
 	$invoice_id = $row->invoice_id;
 
-	$sql_client="SELECT ContactName, CompanyName, NationalID, Family from  tblclient WHERE ID= :client_id";
+	$sql_client="SELECT * from  tblclient WHERE ID= :client_id";
 	$query_client = $dbh -> prepare($sql_client);
 	$query_client->bindParam(':client_id',$client_id,PDO::PARAM_STR);
 	$query_client->execute();
@@ -88,6 +88,9 @@ foreach($results as $row)
 		$company_name = $rowclient->CompanyName;
 		$nationalid = $rowclient->NationalID;
 		$family=$rowclient->Family;
+		$guarantor=$rowclient->Guarantor;
+		$phnumber=$rowclient->Clientphnumber;
+		$gphnumber = $rowclient->Guarantorphnumber;
 	}
 
 
@@ -96,24 +99,34 @@ foreach($results as $row)
 	?>
 						<div class="graph">
 							<div class="tables">
-								<h4>Invoice #<?php echo $invid;?></h4>
+								<h4><?php  echo htmlentities($client_name);?><br>
+									Invoice #<?php echo $invid;?></h4>
 									<table class="table table-bordered" width="100%" border="1"> 
 							<tr>
 								<th colspan="6">Client Details</th>	
 							</tr>
-							 <tr> 
-								<th>Client Name</th> 
-								<td><?php  echo htmlentities($client_name);?></td>
+							 
+							<tr> 
+								
 								<th>Client Business</th> 
 								<td><?php  echo htmlentities($company_name);?></td> 
 								<th>ID / Passport No.</th> 
 								<td><?php  echo htmlentities($nationalid);?></td>
+								<th>Phone Number</th> 
+								<td><?php echo  htmlentities($phnumber);?></td> 
 							</tr> 
 							 <tr> 
 								<th>Family</th> 
 								<td><?php echo htmlentities($family);?></td> 
+								
+								<th>Guarantor</th> 
+								<td><?php echo  htmlentities($guarantor);?></td> 
+								<th>Guarantor Contact</th> 
+								<td><?php  echo htmlentities($gphnumber);?></td>
+							</tr> 
+							 <tr> 
 								<th>Invoice Date</th> 
-								<td colspan="3"><?php echo  htmlentities(date("d-m-Y",strtotime($row->invoice_date)));?></td> 
+								<td colspan="5"><?php echo  htmlentities(date("d-m-Y",strtotime($row->invoice_date)));?></td> 
 							</tr> 
 <?php $cnt=$cnt+1;}} ?>
 </table>
@@ -142,7 +155,14 @@ foreach($results as $row)
 	if($query1->rowCount() > 0)
 	{
 		foreach($rs as $row1)
-		{               
+		{     
+			    
+			$amtpaid = $row1->amount_paid; 
+			if ($amtpaid) {
+				$datepaid_print = date("d-m-Y",strtotime($row1->date_paid));
+			}else {
+                $datepaid_print = "-";
+            }
 			?>
 
 				<tr>
@@ -151,7 +171,7 @@ foreach($results as $row)
 					<td style="text-align: right;" nowrap="nowrap"><?php echo number_format($row1->amount,2);?></td>
 					<td style="text-align: right;" nowrap="nowrap"><?php echo number_format($row1->amount_paid,2);?></td>
 					<td style="text-align: right;" nowrap="nowrap"><?php echo number_format(($row1->amount-$row1->amount_paid),2);?></td>
-					<td style="text-align: center;" nowrap="nowrap"><?php echo date("d-m-Y",strtotime($row1->date_paid));?></td>
+					<td style="text-align: center;" nowrap="nowrap"><?php echo $datepaid_print;?></td>
 				</tr>
 
 			<?php $cnt=$cnt+1;
